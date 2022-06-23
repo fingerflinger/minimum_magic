@@ -1,0 +1,52 @@
+- uggh, need to make a rules engine first off
+- Then need to make a card text interpreter?? Yikes
+
+
+RULES ENGINE
+- PHASES
+ Beginning Phase
+    Untap
+    Upkeep
+    Draw
+ Precombat Main Phase
+
+- CARD TYPES
+- EFFECTS
+
+
+
+COMBAT TRAINER
+Begin with combat phase and devise an attack or block
+Cards in hand, open mana, just randomly initiate some stuff w/ rules support as step one
+
+Beginning of Combat Step
+Declare Attackers
+Declare Blockers
+First Strike Damage
+Damage Step
+End of Combat Step
+
+
+MINIMAL PROTOTYPE - PSEUDOCODE BLEAHH
+
+
+- Battlefield Class
+    - Permanents
+        - Lands
+        - Creatures
+            Grizzly Bears
+            Goblin Piker
+        - Artifacts
+            n/a 
+- Player's Hand
+    - Instants
+        Lightning Bolt
+        Giant Growth
+
+Game State
+    Game Step
+        - Tick through the state machine, must resolve priority to proceed to next step. Priority check is iniated whenever an effect goes on the stack
+    Life Totals
+    Stack
+        - Effects Pending Resolution
+
