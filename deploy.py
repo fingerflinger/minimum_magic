@@ -27,7 +27,12 @@ def find_card(card_name, set_code='', artist=''):
         return False # Err code too?
 
 def hash_file(file_loc):
-    pass
+    with open(file_loc, mode='rb') as my_file:
+        file_contents = my_file.read()
+        m = hashlib.md5()
+        m.update(file_contents)
+        my_hash = m.hexdigest()
+        return my_hash
 
 def check_file(file_loc):
     if(os.path.isfile(file_loc)): 
@@ -50,10 +55,10 @@ def download_card(card_id, destination, verification_hash):
     my_links = card.image_uris()
    
     if ("small" in my_links.keys()):
-        do_download(my_links["small"], "assets/" + construct_file_name(card.name(), "_small.jpg"))
+        do_download(my_links["small"], os.path.join(destination, construct_file_name(card.name(), "_small.jpg")))
     
     if ("normal" in my_links.keys()):
-        do_download(my_links["normal"], "assets/" + construct_file_name(card.name(), "_normal.jpg"))
+        do_download(my_links["normal"], os.path.join(destination, construct_file_name(card.name(), "_normal.jpg")))
 
 # hash the existing files for later comparison
 def snapshot():
