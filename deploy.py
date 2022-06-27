@@ -13,15 +13,15 @@ def generate_manifest(card_list, asset_path):
     # generate a manifest that enables us to check our environment is set up correctly 
     pass
 
-def find_card(card_name, set_code, artist):
-    query = "name:{}".format(card_name)
+def find_card(card_name, set_code='', artist=''):
+    query = "name:\"{}\"".format(card_name)
     if set_code:
-        query += " set:{}".format(set_code)
+        query += " set:\"{}\"".format(set_code)
     if artist:
-        query += " artist:{}".format(artist)
+        query += " artist:\"{}\"".format(artist)
 
     results = scrython.cards.Search(q=query)
-    if results.card_count() == 1:
+    if results.total_cards() == 1:
         return results
     else:
         return False # Err code too?
