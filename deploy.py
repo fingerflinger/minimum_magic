@@ -17,6 +17,10 @@ def generate_manifest(card_list, asset_path):
     # generate a manifest that enables us to check our environment is set up correctly
     pass
 
+def download_list(card_list, destination):
+    for card in card_list:
+        download_card(card[1], destination)
+
 def find_card(card_name, set_code='', artist=''):
     query = "name:\"{}\"".format(card_name)
     if set_code:
@@ -50,11 +54,11 @@ def do_download(uri, destination, verification_hash=""):
     # TODO check for file
 
 def construct_file_name(card_name, suffix):
-    # TODO
     # Need to handle spaces and tricky characters in the card names
-    return card_name + "_small.jpg"
+    card_name = card_name.lower().replace(" ", "_")
+    return card_name + suffix
 
-def download_card(card_id, destination, verification_hash):
+def download_card(card_id, destination, verification_hash=None):
     card = scrython.cards.Id(id=card_id)
     my_links = card.image_uris()
 
@@ -76,7 +80,7 @@ def main():
 
     # For each file on list, check for exsistence. If not present, then download.
     # After downloading or if exsists already, compare hash
-    download_card(card_list[0], asset_path)
+    download_list(card_list, asset_path)
 
 if __name__ == "__main__":
     main()
