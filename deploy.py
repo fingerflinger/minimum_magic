@@ -5,11 +5,12 @@ import hashlib
 
 asset_path = "assets"
 
-card_list = [("Mountain", "e1af2d09-908e-442e-a9d0-9c618a71a327"), # Mountain
+card_list = [("Mountain", "e1af2d09-908e-442e-a9d0-9c618a71a327"),
              ("Forest", "e160ed28-7752-486e-85bb-bbff03642c67"),
              ("Lightning Bolt", "f29ba16f-c8fb-42fe-aabf-87089cb214a7"),
              ("Grizzly Bears", "48e1b99c-97d0-48f2-bfdf-faa65bc0b608"),
-             ("Hill Giant", "14c2be6a-9ca6-4d3a-8dd0-db4ea40799f8")]
+             ("Hill Giant", "14c2be6a-9ca6-4d3a-8dd0-db4ea40799f8"),
+             ("Giant's Growth", "1210c342-1473-44ae-bcaa-e6b3ef9aea90")]
 
 
 def generate_manifest(card_list, asset_path):
