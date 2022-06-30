@@ -74,6 +74,24 @@ function preload ()
 
 function create ()
 {
+    var sprite = this.add.sprite(400, 300, 'forest').setInteractive();
+
+    sprite.on('pointerdown', function (pointer) {
+        if (this.rotation == 0) {
+            this.rotation = 3.14/2;
+        }
+        else {
+            this.rotation = 0;
+        }
+    });
+
+    sprite.on('pointerout', function (pointer) {
+        this.clearTint();
+    });
+
+    sprite.on('pointerup', function (pointer) {
+        this.clearTint();
+    });
 
     this.add.image(150,150, 'mountain');
     this.add.image(200,150, 'mountain');
