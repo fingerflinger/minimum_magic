@@ -21,10 +21,6 @@ class Permanent {
         this.im = name;
     }
 
-    placeObject(game_ref, x, y) {
-        this.sprite = game_ref.add.sprite(x, y, this.im).setInteractive();
-        this.sprite.on('pointerdown', onClick);
-    }
     onClick() {
         if (this.rotation == 0) {
             this.rotation = 3.14/2;
@@ -34,26 +30,31 @@ class Permanent {
         }
     }
 
+    placeObject(game_ref, x, y) {
+        this.sprite = game_ref.add.sprite(x, y, this.im).setInteractive();
+        this.sprite.on('pointerdown', this.onClick);
+    }
+
     tap() {
-        this.tapped = True;
-        //this.sprite.rotation = 3.14/2;
+        this.tapped = true;
+        this.sprite.rotation = 3.14/2;
     }
 
     untap() {
-        this.tapped = False;
-        //this.sprite.rotation = 0;
+        this.tapped = false;
+        this.sprite.rotation = 0;
     }
 }
 
 class Land extends Permanent {
     constructor(game_ref, name, tapped){
-        this.super(game_ref, name, tapped, "land");
+        super(game_ref, name, tapped, "land");
     }
 }
 
 class Creature extends Permanent {
     constructor(game_ref, name, tapped) {
-        this.super(game_ref, name, tapped, "creature");
+        super(game_ref, name, tapped, "creature");
         this.summoning_sickness = true;
     }
 }
@@ -147,14 +148,14 @@ function create ()
 
     for (var i=0; i<testState.permanents.length; i++) {
         var my_perm = testState.permanents[i];
-        my_perm.place_object();
+        my_perm.placeObject();
     }
     */
 
-    //var myLand = new Land("mountain", False);
-    //myLand.place_object(this, 300, 300);
+    var myLand = new Land("mountain", false);
+    myLand.placeObject(this, 300, 300);
 
-    for (var i=0; i<3; i++) {
+    /*for (var i=0; i<3; i++) {
         var sprite = this.add.sprite(400 + i*50, 300, 'forest').setInteractive();
         sprite.on('pointerdown', function (pointer) {
             if (this.rotation == 0) {
@@ -170,7 +171,7 @@ function create ()
         sprite.on('pointerup', function (pointer) {
             this.clearTint();
         });
-    }
+    }*/
 
     //  Input Events
     cursors = this.input.keyboard.createCursorKeys();
