@@ -14,36 +14,100 @@
 
 <script type="text/javascript">
 
-class Card{
-    constructor(card_type){
-        this.card_type = card_type;
-    }
-}
-
-class Permanent{
-    constructor(tapped, card_type){
+class Permanent {
+    constructor(name, tapped, card_type) {
         this.tapped = tapped;
         this.card_type = card_type;
-        if (this.card_type == "creature") {
-            this.summoning_sickness = true;
+        this.im = name;
+    }
+
+    placeObject(game_ref, x, y) {
+        this.sprite = game_ref.add.sprite(x, y, this.im).setInteractive();
+        this.sprite.on('pointerdown', onClick);
+    }
+    onClick() {
+        if (this.rotation == 0) {
+            this.rotation = 3.14/2;
         }
+        else {
+            this.rotation = 0;
+        }
+    }
+
+    tap() {
+        this.tapped = True;
+        //this.sprite.rotation = 3.14/2;
+    }
+
+    untap() {
+        this.tapped = False;
+        //this.sprite.rotation = 0;
     }
 }
 
+class Land extends Permanent {
+    constructor(game_ref, name, tapped){
+        this.super(game_ref, name, tapped, "land");
+    }
+}
+
+class Creature extends Permanent {
+    constructor(game_ref, name, tapped) {
+        this.super(game_ref, name, tapped, "creature");
+        this.summoning_sickness = true;
+    }
+}
+
+class PlayerBoard {
+    constructor() {
+        this.life_total = 20;
+        // Zones
+        const creature_zone_offset = 150;
+        const lands_zone_offset = 300;
+        const hand_zone_offset = 450;
+        const graveyard_zone_offset = 300;
+        const exile_zone_offset = 300;
+
+        this.creatures = [];
+        this.lands = [];
+        this.hand = [];
+        this.graveyard = [];
+        this.exile = [];
+    }
+
+    untapStep() {
+        for (var i=0; i < this.lands.length;i++) {
+            this.lands[i].untap();
+        }
+    }
+
+    addLand(game_ref, my_land) {
+        // If same name as existing land, then place it next to that one. Else append to the end
+        for (var i=0; i < this.lands.length;i++) {
+            if (this.lands[i].name == my_land.name) {
+                this.lands(i, 0, my_land);
+                return;
+            }
+        }
+        this.lands.push(my_land);
+
+    }
+}
+
+
 class BoardState {
-    constructor(){
-        //this.hero_board = [];
-        //const this.villain_board = [];
+    constructor() {
+        var hero_board = new PlayerBoard();
+        var villain_board = new PlayerBoard();
     }
 }
 
 
 class GameState {
-    constructor(initial_state){
+    constructor(initial_state) {
         this.current_state = initial_state;
     }
 }
-
 
 var config = {
     type: Phaser.AUTO,
@@ -55,6 +119,7 @@ var config = {
         update: update
     }
 };
+
 
 var cursors;
 var score = 0;
@@ -77,9 +142,20 @@ function create ()
     //  The score
     villainLifeTotal = this.add.text(16, 16, 'Life Total: 10', { fontSize: '32px', fill: '#FFF' });
 
+    /*var testState = new BoardState(this);
+    testState.initTest();
+
+    for (var i=0; i<testState.permanents.length; i++) {
+        var my_perm = testState.permanents[i];
+        my_perm.place_object();
+    }
+    */
+
+    //var myLand = new Land("mountain", False);
+    //myLand.place_object(this, 300, 300);
+
     for (var i=0; i<3; i++) {
         var sprite = this.add.sprite(400 + i*50, 300, 'forest').setInteractive();
-
         sprite.on('pointerdown', function (pointer) {
             if (this.rotation == 0) {
                 this.rotation = 3.14/2;
@@ -88,11 +164,9 @@ function create ()
                 this.rotation = 0;
             }
         });
-
         sprite.on('pointerout', function (pointer) {
             this.clearTint();
         });
-
         sprite.on('pointerup', function (pointer) {
             this.clearTint();
         });
