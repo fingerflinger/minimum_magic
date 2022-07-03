@@ -60,15 +60,15 @@ class Creature extends Permanent {
 }
 
 class PlayerBoard {
+    // Zones
+    //const creature_zone_offset = 150; TODO something wrong with these defs
+    //const hand_zone_offset = 450;
+    //const graveyard_zone_offset = 300;
+    //const exile_zone_offset = 300;
+
     constructor() {
         this.life_total = 20;
-        // Zones
-        const creature_zone_offset = 150;
-        const lands_zone_offset = 300;
-        const hand_zone_offset = 450;
-        const graveyard_zone_offset = 300;
-        const exile_zone_offset = 300;
-
+        this.lands_zone_offset = 300;
         this.creatures = [];
         this.lands = [];
         this.hand = [];
@@ -82,11 +82,11 @@ class PlayerBoard {
         }
     }
 
-    addLand(game_ref, my_land) {
+    addLand(my_land) {
         // If same name as existing land, then place it next to that one. Else append to the end
         for (var i=0; i < this.lands.length;i++) {
             if (this.lands[i].name == my_land.name) {
-                this.lands(i, 0, my_land);
+                this.lands.splice(i, 0, my_land);
                 return;
             }
         }
@@ -97,9 +97,47 @@ class PlayerBoard {
 
 
 class BoardState {
-    constructor() {
-        var hero_board = new PlayerBoard();
-        var villain_board = new PlayerBoard();
+    constructor(game_ref) {
+        this.hero_board = new PlayerBoard();
+        this.villain_board = new PlayerBoard();
+        this.game_ref = game_ref;
+    }
+
+    initTest() {
+        this.hero_board.addLand(new Land("mountain", false));
+        this.hero_board.addLand(new Land("mountain", false));
+        this.hero_board.addLand(new Land("mountain", false));
+
+        this.villain_board.addLand(new Land("forest", true));
+        this.villain_board.addLand(new Land("forest", true));
+        this.villain_board.addLand(new Land("forest", true));
+    }
+
+    initGameObj(game_ref) {
+        // We'll position game objects in boardRender function
+        for (var i=0;i<this.hero_board.lands.length;i++) {
+            this.hero_board.lands[i].placeObject(game_ref, 0, 0);
+        }
+        for (var i=0;i<this.villain_board.lands.length;i++) {
+            this.villain_board.lands[i].placeObject(game_ref, 0, 0);
+        }
+    }
+
+    renderBoard() {
+        for (var i=0; i<this.hero_board.lands.length;i++) {
+            var x = 150 + i*50;
+            var y = this.hero_board.lands_zone_offset + 450;
+            console.log(x);
+            console.log(y);
+            this.hero_board.lands[i].sprite.setPosition(x, y);
+        }
+        for (var i=0; i<this.villain_board.lands.length;i++) {
+            var x = 150 + i*50;
+            var y = 450 - this.hero_board.lands_zone_offset;
+            console.log(x);
+            console.log(y);
+            this.villain_board.lands[i].sprite.setPosition(x, y);
+        }
     }
 }
 
@@ -143,35 +181,13 @@ function create ()
     //  The score
     villainLifeTotal = this.add.text(16, 16, 'Life Total: 10', { fontSize: '32px', fill: '#FFF' });
 
-    /*var testState = new BoardState(this);
+    var testState = new BoardState(this);
     testState.initTest();
+    testState.initGameObj(this);
+    testState.renderBoard();
 
-    for (var i=0; i<testState.permanents.length; i++) {
-        var my_perm = testState.permanents[i];
-        my_perm.placeObject();
-    }
-    */
-
-    var myLand = new Land("mountain", false);
-    myLand.placeObject(this, 300, 300);
-
-    /*for (var i=0; i<3; i++) {
-        var sprite = this.add.sprite(400 + i*50, 300, 'forest').setInteractive();
-        sprite.on('pointerdown', function (pointer) {
-            if (this.rotation == 0) {
-                this.rotation = 3.14/2;
-            }
-            else {
-                this.rotation = 0;
-            }
-        });
-        sprite.on('pointerout', function (pointer) {
-            this.clearTint();
-        });
-        sprite.on('pointerup', function (pointer) {
-            this.clearTint();
-        });
-    }*/
+    //var myLand = new Land("mountain", false);
+    //myLand.placeObject(this, 300, 300);
 
     //  Input Events
     cursors = this.input.keyboard.createCursorKeys();
