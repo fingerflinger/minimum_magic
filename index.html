@@ -61,19 +61,22 @@ class Creature extends Permanent {
 
 class PlayerBoard {
     // Zones
-    //const creature_zone_offset = 150; TODO something wrong with these defs
-    //const hand_zone_offset = 450;
-    //const graveyard_zone_offset = 300;
-    //const exile_zone_offset = 300;
+    static lands_zone_offset = 300;
+    static creature_zone_offset = 150; //TODO something wrong with these defs
+    static hand_zone_offset = 450;
+    static graveyard_zone_offset = 300;
+    static exile_zone_offset = 300;
 
     constructor() {
         this.life_total = 20;
-        this.lands_zone_offset = 300;
         this.creatures = [];
         this.lands = [];
         this.hand = [];
         this.graveyard = [];
         this.exile = [];
+        this.priority = false; // Priority means, mana abilities active, activate abilities active, instants active, flash cards active
+        this.sorceries = false; // Cast sorceries and non-flash permanents, activate sorcery abilities, planeswalkers
+
     }
 
     untapStep() {
@@ -126,14 +129,14 @@ class BoardState {
     renderBoard() {
         for (var i=0; i<this.hero_board.lands.length;i++) {
             var x = 150 + i*50;
-            var y = this.hero_board.lands_zone_offset + 450;
+            var y = PlayerBoard.lands_zone_offset + 450;
             console.log(x);
             console.log(y);
             this.hero_board.lands[i].sprite.setPosition(x, y);
         }
         for (var i=0; i<this.villain_board.lands.length;i++) {
             var x = 150 + i*50;
-            var y = 450 - this.hero_board.lands_zone_offset;
+            var y = 450 - PlayerBoard.lands_zone_offset;
             console.log(x);
             console.log(y);
             this.villain_board.lands[i].sprite.setPosition(x, y);
@@ -145,6 +148,7 @@ class BoardState {
 class GameState {
     constructor(initial_state) {
         this.current_state = initial_state;
+
     }
 }
 
