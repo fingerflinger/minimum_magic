@@ -98,6 +98,12 @@ class PlayerBoard {
     }
 }
 
+class Scenario {
+    constructor(game_phase_enum, board_state) {
+        this.game_phase = game_phase_enum;
+        this.board_state = board_state;
+    }
+}
 
 class BoardState {
     constructor(game_ref) {
@@ -145,13 +151,6 @@ class BoardState {
 }
 
 
-class GameState {
-    constructor(initial_state) {
-        this.current_state = initial_state;
-
-    }
-}
-
 var config = {
     type: Phaser.AUTO,
     width: 1600,
@@ -162,6 +161,16 @@ var config = {
         update: update
     }
 };
+
+
+class GamePhaseEnum {
+    static BeginningOfCombatStep = new GamePhaseEnum("BeginningOfCombatStep");
+    static DeclareAttackers = new GamePhaseEnum("DeclareAttackers");
+    static DeclareBlockers = new GamePhaseEnum("DeclareBlockers");
+    static FirstStrikeDamage = new GamePhaseEnum("FirstStrikeDamage");
+    static RegularCombatDamage = new GamePhaseEnum("RegularCombatDamage");
+    static EndOfCombatStep = new GamePhaseEnum("EndOfCombatStep");
+}
 
 
 var cursors;
