@@ -61,8 +61,8 @@ class Creature extends Permanent {
 
 class PlayerBoard {
     // Zones
-    static landsZoneOffset = 300;
-    static creatureZoneOffset = 150; //TODO something wrong with these defs
+    static landsZoneOffset = 350;
+    static creatureZoneOffset = 150;
     static handZoneOffset = 450;
     static graveyardZone_offset = 300;
     static exileZoneOffset = 300;
@@ -76,7 +76,6 @@ class PlayerBoard {
         this.exile = [];
         this.priority = false; // Priority means, mana abilities active, activate abilities active, instants active, flash cards active
         this.sorceries = false; // Cast sorceries and non-flash permanents, activate sorcery abilities, planeswalkers
-
     }
 
     untapStep() {
@@ -94,9 +93,20 @@ class PlayerBoard {
             }
         }
         this.lands.push(my_land);
+    }
 
+    addCreature(my_creature) {
+         // If same name as existing land, then place it next to that one. Else append to the end
+        for (var i=0; i < this.creatures.length;i++) {
+            if (this.creatures[i].name == my_creature.name) {
+                this.creatures.splice(i, 0, my_creature);
+                return;
+            }
+        }
+        this.creatures.push(my_creature);
     }
 }
+
 
 class Scenario {
     constructor(game_phase_enum, board_state) {
@@ -104,6 +114,7 @@ class Scenario {
         this.boardState = board_state;
     }
 }
+
 
 class BoardState {
     constructor(game_ref) {
@@ -113,7 +124,6 @@ class BoardState {
     }
 
     initTest() {
-        console.log("trace");
         this.heroBoard.addLand(new Land("mountain", false));
         this.heroBoard.addLand(new Land("mountain", false));
         this.heroBoard.addLand(new Land("mountain", false));
@@ -131,6 +141,13 @@ class BoardState {
         for (var i=0;i<this.villainBoard.lands.length;i++) {
             this.villainBoard.lands[i].placeObject(game_ref, 0, 0);
         }
+
+        for (var i=0;i<this.heroBoard.creatures.length;i++) {
+            this.heroBoard.creatures[i].placeObject(game_ref, 0, 0);
+        }
+        for (var i=0;i<this.villainBoard.creatures.length;i++) {
+            this.villainBoard.creatures[i].placeObject(game_ref, 0, 0);
+        }
     }
 
     renderBoard() {
@@ -142,9 +159,17 @@ class BoardState {
         for (var i=0; i<this.villainBoard.lands.length;i++) {
             var x = 150 + i*50;
             var y = 450 - PlayerBoard.landsZoneOffset;
-            console.log(x);
-            console.log(y);
             this.villainBoard.lands[i].sprite.setPosition(x, y);
+        }
+        for (var i=0; i<this.heroBoard.creatures.length;i++) {
+            var x = 550 + i*50;
+            var y = PlayerBoard.creatureZoneOffset + 450;
+            this.heroBoard.creatures[i].sprite.setPosition(x, y);
+        }
+        for (var i=0; i<this.villainBoard.creatures.length;i++) {
+            var x = 550 + i*50;
+            var y = 450 - PlayerBoard.creatureZoneOffset;
+            this.villainBoard.creatures[i].sprite.setPosition(x, y);
         }
     }
 }
@@ -186,25 +211,37 @@ function preload () {
     this.load.image('lightning_bolt', 'assets/lightning_bolt_small.jpg');
     this.load.image('giant_growth', 'assets/giant_growth_small.jpg');
     this.load.image('grizzly_bears', 'assets/grizzly_bears_small.jpg');
+    this.load.image('hill_giant', 'assets/hill_giant_small.jpg');
 }
 
 function puzzle1(game_ref) {
-    var my_scenario = new Scenario(GamePhaseEnum.DeclareAttackers);
     var my_board = new BoardState(game_ref);
-    my_board.villainBoard.lifeTotal = 2;
+
     my_board.heroBoard.lifeTotal = 3;
+    my_board.heroBoard.addLand(new Land("mountain", false));
+    my_board.heroBoard.addLand(new Land("mountain", false));
+    my_board.heroBoard.addLand(new Land("forest", false));
+    my_board.heroBoard.addCreature(new Creature("grizzly_bears", false));
+    my_board.heroBoard.addCreature(new Creature("grizzly_bears", false));
+
+    my_board.villainBoard.lifeTotal = 2;
+    my_board.villainBoard.addLand(new Land("forest", true));
+    my_board.villainBoard.addLand(new Land("forest", true));
+    my_board.villainBoard.addLand(new Land("forest", true));
+    my_board.villainBoard.addCreature(new Creature("hill_giant", true));
+
+    //var my_scenario = new Scenario(GamePhaseEnum.DeclareAttackers, my_board);
+    return my_board;
 }
 
 
 function create () {
-    var test_state = new BoardState(this);
-    test_state.initTest();
+    var test_state = puzzle1();
     test_state.initGameObj(this);
     test_state.renderBoard();
 
-
-    villain_life_total = this.add.text(16, 16, 'Villain Life Total: 10', { fontSize: '32px', fill: '#FFF' });
-    hero_life_total = this.add.text(16, 870, 'Hero Life Total: 2', { fontSize: '32px', fill: '#FFF' });
+    villain_life_total = this.add.text(950, 16, 'Villain Life Total: 2', { fontSize: '32px', fill: '#FFF' });
+    hero_life_total = this.add.text(950, 870, 'Hero Life Total: 3', { fontSize: '32px', fill: '#FFF' });
 
     //  Input Events
     cursors = this.input.keyboard.createCursorKeys();
