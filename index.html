@@ -137,8 +137,6 @@ class BoardState {
         for (var i=0; i<this.heroBoard.lands.length;i++) {
             var x = 150 + i*50;
             var y = PlayerBoard.landsZoneOffset + 450;
-            console.log(x);
-            console.log(y);
             this.heroBoard.lands[i].sprite.setPosition(x, y);
         }
         for (var i=0; i<this.villainBoard.lands.length;i++) {
@@ -178,11 +176,11 @@ var cursors;
 var score = 0;
 var game_over = false;
 var villain_life_total;
+var hero_life_total;
 
 var game = new Phaser.Game(config);
 
-function preload ()
-{
+function preload () {
     this.load.image('mountain', 'assets/mountain_small.jpg');
     this.load.image('forest', 'assets/forest_small.jpg');
     this.load.image('lightning_bolt', 'assets/lightning_bolt_small.jpg');
@@ -190,27 +188,30 @@ function preload ()
     this.load.image('grizzly_bears', 'assets/grizzly_bears_small.jpg');
 }
 
-function create ()
-{
-    //  The score
-    villain_life_total = this.add.text(16, 16, 'Life Total: 10', { fontSize: '32px', fill: '#FFF' });
+function puzzle1(game_ref) {
+    var my_scenario = new Scenario(GamePhaseEnum.DeclareAttackers);
+    var my_board = new BoardState(game_ref);
+    my_board.villainBoard.lifeTotal = 2;
+    my_board.heroBoard.lifeTotal = 3;
+}
 
+
+function create () {
     var test_state = new BoardState(this);
     test_state.initTest();
     test_state.initGameObj(this);
     test_state.renderBoard();
 
-    //var myLand = new Land("mountain", false);
-    //myLand.placeObject(this, 300, 300);
+
+    villain_life_total = this.add.text(16, 16, 'Villain Life Total: 10', { fontSize: '32px', fill: '#FFF' });
+    hero_life_total = this.add.text(16, 870, 'Hero Life Total: 2', { fontSize: '32px', fill: '#FFF' });
 
     //  Input Events
     cursors = this.input.keyboard.createCursorKeys();
 }
 
-function update ()
-{
-    if (game_over)
-    {
+function update () {
+    if (game_over) {
         return;
     }
 }
