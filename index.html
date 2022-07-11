@@ -33,17 +33,12 @@ class Permanent {
 
     onClick() {  // When called from callback, this is a "sprite", not a "Permanent"
         console.log(this);
-        if (this.tapped) {
-            this.untap();
-        }
-        else {
-            this.tap();
-        }
     }
 
-    placeObject(game_ref, x, y) {
+    placeObject(game_ref, x, y, name) {
         this.sprite = game_ref.add.sprite(x, y, this.im).setInteractive();
         this.sprite.on('pointerdown', this.onClick);
+        this.sprite.name = name;
     }
 }
 
@@ -138,17 +133,21 @@ class BoardState {
     initGameObj(game_ref) {
         // We'll position game objects in boardRender function
         for (var i=0;i<this.hero.lands.length;i++) {
-            this.hero.lands[i].placeObject(game_ref, 0, 0);
+            var name = "hero_land_" + i;
+            this.hero.lands[i].placeObject(game_ref, 0, 0, name);
         }
         for (var i=0;i<this.villain.lands.length;i++) {
-            this.villain.lands[i].placeObject(game_ref, 0, 0);
+            var name = "villain_land_" + i;
+            this.villain.lands[i].placeObject(game_ref, 0, 0, name);
         }
 
         for (var i=0;i<this.hero.creatures.length;i++) {
-            this.hero.creatures[i].placeObject(game_ref, 0, 0);
+            var name = "hero_creatures_" + i;
+            this.hero.creatures[i].placeObject(game_ref, 0, 0, name);
         }
         for (var i=0;i<this.villain.creatures.length;i++) {
-            this.villain.creatures[i].placeObject(game_ref, 0, 0);
+            var name = "villain_creatures" + i;
+            this.villain.creatures[i].placeObject(game_ref, 0, 0, name);
         }
     }
 
