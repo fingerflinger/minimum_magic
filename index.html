@@ -14,6 +14,34 @@
 
 <script type="text/javascript">
 
+class Entity {
+    constructor(
+        name,
+        uuid,
+        owner,
+        controller,
+        conditions,
+        zone,
+        damage,
+        power,
+        toughness,
+        keywords
+    ) {
+        this.name = name;
+
+        // TODO fix kludge. I'm literally just going to make this the ent count
+        this.uuid = uuid; 
+
+        this.owner = owner;
+        this.conditions = conditions;
+        this.zone = zone;
+        this.damage = damage;
+        this.power = power;
+        this.toughness = toughness;
+        this.keywords = keywords;
+    }
+}
+
 class Permanent {
     constructor(name, tapped, card_type) {
         this.tapped = tapped;
@@ -30,8 +58,9 @@ class Permanent {
         this.tapped = false;
         this.sprite.rotation = 0;
     }
-
-    onClick() {  // When called from callback, this is a "sprite", not a "Permanent"
+    
+    // When called from callback, this is a "sprite", not a "Permanent"
+    onClick() {  
         console.log(this);
     }
 
@@ -55,6 +84,14 @@ class Creature extends Permanent {
     }
 }
 
+class EntityManager {
+    // Creates and Controls references to all entities. We can dervive game 
+    // state from this structure
+    constructor() {
+        this.entities = [];
+    }
+}
+
 class Player{
     // Zones
     static landsZoneOffset = 350;
@@ -70,8 +107,14 @@ class Player{
         this.hand = [];
         this.graveyard = [];
         this.exile = [];
-        this.priority = false; // Priority means, mana abilities active, activate abilities active, instants active, flash cards active
-        this.sorceries = false; // Cast sorceries and non-flash permanents, activate sorcery abilities, planeswalkers. 3Feri ability, Vedalken Orrery relevant here
+        
+        // Priority means, mana abilities active, activate abilities active,
+        // instants active, flash cards active
+        this.priority = false;
+
+        // Cast sorceries and non-flash permanents, activate sorcery abilities,
+        // planeswalkers. 3Feri ability, Vedalken Orrery relevant here
+        this.sorceries = false;
         this.activePlayer = false; // Whose turn is it?
     }
 
@@ -82,7 +125,8 @@ class Player{
     }
 
     addLand(my_land) {
-        // If same name as existing land, then place it next to that one. Else append to the end
+        // If same name as existing land, then place it next to that one.
+        // Else append to the end
         for (var i=0; i < this.lands.length;i++) {
             if (this.lands[i].name == my_land.name) {
                 this.lands.splice(i, 0, my_land);
@@ -93,7 +137,8 @@ class Player{
     }
 
     addCreature(my_creature) {
-         // If same name as existing land, then place it next to that one. Else append to the end
+         // If same name as existing creature, then place it next to that one.
+         // Else append to the end
         for (var i=0; i < this.creatures.length;i++) {
             if (this.creatures[i].name == my_creature.name) {
                 this.creatures.splice(i, 0, my_creature);
@@ -215,10 +260,9 @@ function preload () {
     this.load.image('hill_giant', 'assets/hill_giant_small.jpg');
 }
 
-function puzzle1(game_ref) {
-    var my_board = new BoardState(game_ref);
+function puzzle1(entity_manager) {
+    entity_manager.addEnt(new Entity());
 
-    my_board.hero.lifeTotal = 3;
     my_board.hero.addLand(new Land("mountain", false));
     my_board.hero.addLand(new Land("mountain", false));
     my_board.hero.addLand(new Land("forest", false));
@@ -237,12 +281,23 @@ function puzzle1(game_ref) {
 }
 
 function create () {
-    var test_state = puzzle1();
+    var objects = new EntityManager();
+    var test_state = puzzle1(game);
     test_state.initGameObj(this);
     test_state.renderBoard();
 
-    villain_life_total = this.add.text(950, 16, 'Villain Life Total: 2', { fontSize: '32px', fill: '#FFF' });
-    hero_life_total = this.add.text(950, 870, 'Hero Life Total: 3', { fontSize: '32px', fill: '#FFF' });
+    villain_life_total = this.add.text(
+        950,
+        16,
+        'Villain Life Total: 2',
+        { fontSize: '32px', fill: '#FFF' }
+    );
+    hero_life_total = this.add.text(
+        950,
+        870,
+        'Hero Life Total: 3',
+        { fontSize: '32px', fill: '#FFF' }
+    );
 
     //  Input Events
     cursors = this.input.keyboard.createCursorKeys();
